@@ -1,0 +1,18 @@
+package ecommerce.repository;
+
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import ecommerce.models.OrderItem;
+import ecommerce.models.Orders;
+
+
+@Repository
+public interface OrderItemRepository extends JpaRepository<OrderItem,UUID> {
+
+    List<OrderItem>findAlOrder(Orders order);
+    
+}

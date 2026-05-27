@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="order_items")
-public class Orderitem {
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

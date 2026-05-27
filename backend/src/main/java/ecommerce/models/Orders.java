@@ -46,6 +46,13 @@ public class Orders {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name="is_active")
+    private boolean active;
+
+    public boolean isExpired(){
+        return createdAt.plusDays(7)
+            .isBefore(LocalDateTime.now());
+    }
 
    
     @PrePersist
