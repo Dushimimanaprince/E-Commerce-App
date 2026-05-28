@@ -3,6 +3,7 @@ package ecommerce.models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import ecommerce.Enum.ModelEnum;
 import ecommerce.Enum.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +37,7 @@ public class History {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
-    private String model;
+    private ModelEnum model;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;

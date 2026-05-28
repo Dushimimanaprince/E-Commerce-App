@@ -1,0 +1,7 @@
+# Environment variables
+backend/.env
+
+# Java
+backend/target/
+backend/.idea/
+backend/*.iml

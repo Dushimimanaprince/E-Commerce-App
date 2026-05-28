@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import ecommerce.Enum.ModelEnum;
 import ecommerce.models.Verification;
 
 public interface VerificationRepository extends JpaRepository<Verification,UUID> {
@@ -13,4 +14,5 @@ public interface VerificationRepository extends JpaRepository<Verification,UUID>
 
     Optional<Verification> findByCodeAndEntityId(String code, UUID entityId);
     List<Verification> findByEntityIdAndModel(UUID entityId, String model);
+    Optional<Verification> findByEmailAndModel(String email,ModelEnum User);
 }

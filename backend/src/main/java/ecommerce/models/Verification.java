@@ -3,6 +3,7 @@ package ecommerce.models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import ecommerce.Enum.ModelEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,7 +34,10 @@ public class Verification {
     @Column(name="is_used")
     private boolean isUsed;
 
-    private String model;
+    @Column(name="entity_id")
+    private UUID entityId;
+
+    private ModelEnum model;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
