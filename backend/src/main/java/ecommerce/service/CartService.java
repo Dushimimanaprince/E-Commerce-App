@@ -68,6 +68,10 @@ public class CartService {
         
         Product product =  productRepository.findById(productId)
             .orElseThrow(()-> new RuntimeException("Product Not Found"));
+        
+        if(quantity > product.getQuantity()){
+            throw new RuntimeException("Not enough stock for "+product.getProductName());
+        }
 
         Optional<CartItem> existing = cartItemsRepository.findByCartAndProduct(cart, product);
         if(existing.isPresent()){
@@ -107,6 +111,9 @@ public class CartService {
         
         if(quantity <= 0){
             throw new RuntimeException("The Quantity Should be Above 0");
+        }
+        if(quantity > cartItem.getProduct().getQuantity()){
+            throw new RuntimeException("Not enough stock for "+cartItem.getProduct().getProductName());
         }
         cartItem.setQuantity(quantity);
         
