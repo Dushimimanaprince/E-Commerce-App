@@ -13,6 +13,6 @@ import ecommerce.models.Orders;
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem,UUID> {
 
-    List<OrderItem>findAlOrder(Orders order);
+    List<OrderItem>findAllByOrders(Orders order);
     
 }

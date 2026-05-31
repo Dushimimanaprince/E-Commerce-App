@@ -6,6 +6,8 @@ import java.util.UUID;
 import ecommerce.Enum.ModelEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,6 +39,7 @@ public class Verification {
     @Column(name="entity_id")
     private UUID entityId;
 
+    @Enumerated(EnumType.STRING)
     private ModelEnum model;
 
     @Column(name="created_at")

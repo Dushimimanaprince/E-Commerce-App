@@ -37,6 +37,7 @@ public class History {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @Enumerated(EnumType.STRING)
     private ModelEnum model;
 
     @Column(name="created_at")

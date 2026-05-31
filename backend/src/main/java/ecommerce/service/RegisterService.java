@@ -62,11 +62,11 @@ public class RegisterService {
             throw new RuntimeException("Please provide Email or Code");
         }
 
-        Verification verification= verificationRepository.findByEmailAndModel(email,ModelEnum.USER)
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Verification verification= verificationRepository.findByEntityIdAndModel(user.getUserId(),ModelEnum.USER)
             .orElseThrow(()-> new RuntimeException("There is no Code Assigned to This Email for Registration"));
-        
-        User user= userRepository.findByEmail(email)
-            .orElseThrow(()-> new RuntimeException("User Doesn't Exist with Provided Email"));
 
         if(!verification.getCode().equals(code)){
             throw new RuntimeException("Invalid Code: Please Provide real OTP Code");

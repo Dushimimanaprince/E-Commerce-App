@@ -14,5 +14,5 @@ public interface VerificationRepository extends JpaRepository<Verification,UUID>
 
     Optional<Verification> findByCodeAndEntityId(String code, UUID entityId);
     List<Verification> findByEntityIdAndModel(UUID entityId, String model);
-    Optional<Verification> findByEmailAndModel(String email,ModelEnum User);
+    Optional<Verification> findByEntityIdAndModel(UUID entityId, ModelEnum model);
 }
