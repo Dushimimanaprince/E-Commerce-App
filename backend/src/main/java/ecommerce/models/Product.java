@@ -63,6 +63,11 @@ public class Product {
     @PreUpdate
     public void preUpdate(){
         this.updatedAt= LocalDateTime.now();
+        if(this.quantity <= 0){
+            this.isActive=false;
+        }else{
+            this.isActive=true;
+        }
     }
 
     @ManyToOne
