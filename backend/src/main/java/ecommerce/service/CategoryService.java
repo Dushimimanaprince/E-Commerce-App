@@ -38,13 +38,41 @@ public class CategoryService {
 
         Category category= new Category();
         category.setCategoryName(name);
-        category.setDescription(description);
+        if (description !=null && !description.isBlank()){
+            category.setDescription(description);
+        }
         
         Category saved= categoryRepository.save(category);
         historyService.log("Category Registered",UserRole.ADMIN,ModelEnum.CATEGORY,user);
 
         return saved;
 
+    }
+
+    public Category editCategory(UUID categoryId ,String name,String description){
+
+        String userId= (String) SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getPrincipal();
+
+        User user= userRepository.findById(UUID.fromString(userId))
+            .orElseThrow(()-> new RuntimeException("The User not Found"));
+
+
+        Category category= categoryRepository.findById(categoryId)
+            .orElseThrow(()-> new RuntimeException("The Category not Found"));
+        
+        if(name!=null && !name.isBlank()){
+            category.setCategoryName(name);
+        }
+        if (description !=null && !description.isBlank()){
+            category.setDescription(description);
+        }
+
+        Category saved= categoryRepository.save(category);
+        historyService.log("Category Updated",UserRole.ADMIN,ModelEnum.CATEGORY,user);
+
+        return saved;
     }
     
 }
