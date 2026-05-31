@@ -43,6 +43,13 @@ public class ProductService {
         return productRepository.findByCategory(category, pageable);
     }
 
+    public Page<Product> getActiveProductByCategory(UUID categoryId,Pageable pageable){
+        Category category= categoryRepository.findById(categoryId)
+            .orElseThrow(()-> new RuntimeException("The Category not Found"));
+
+        return productRepository.findByCategoryAndIsActiveTrue(category, pageable);
+    }
+
     public Product createProduct(String productName,String description,double price,int quantity,String imageUrl){
 
         String userId= (String) SecurityContextHolder.getContext()
@@ -133,7 +140,7 @@ public class ProductService {
         }
 
     
-        public Product deleteProduct(UUID productId){
+    public Product deleteProduct(UUID productId){
             Product product= productRepository.findById(productId)
                 .orElseThrow(()-> new RuntimeException("The product not Found"));
 
@@ -152,6 +159,11 @@ public class ProductService {
             
             return saved;
             }
+    
+    public Product searchProduct(String name){
+        return productRepository.findByProductNameContainingIgnoreCase(name)
+            .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
 
 
     

@@ -122,4 +122,16 @@ public class AdminController {
         }
     }
 
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?> getProductsByCategory(
+        @PathVariable UUID categoryId,
+        @PageableDefault(page=0, size=10) Pageable pageable){
+        try {
+            return ResponseEntity.ok(productService.getProductByCategory(categoryId, pageable));
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
 }

@@ -36,5 +36,8 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name="product_id")
     private Product product;
+
+    @Column(name="is_active")
+    private boolean isActive;
     
 }
