@@ -39,7 +39,6 @@ public class Orders {
     @Column(name="total_price")
     private double totalPrice;
 
-
     @Column(name="created_at")
     private LocalDateTime createdAt;
 
