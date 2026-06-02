@@ -1,6 +1,6 @@
 package ecommerce.Enum;
 
-public enum PaymentStatus {
+public enum PaymentStatusEnum {
 
     PENDING,
     PAID,

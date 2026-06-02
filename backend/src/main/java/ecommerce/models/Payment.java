@@ -3,7 +3,8 @@ package ecommerce.models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import ecommerce.Enum.PaymentStatus;
+
+import ecommerce.Enum.PaymentStatusEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -34,13 +35,19 @@ public class Payment {
     private UUID paymentId;
 
     @Enumerated(EnumType.STRING)
-    private PaymentStatus status;
+    private PaymentStatusEnum status;
+
+    @Column(name="is_active")
+    private boolean isActive;
+
+    private double amount;
 
     @Column(name="transaction_id")
     private String transactionId;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
+
    
     @PrePersist
     public void prePersist(){

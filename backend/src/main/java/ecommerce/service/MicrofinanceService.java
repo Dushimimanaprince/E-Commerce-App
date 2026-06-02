@@ -51,7 +51,7 @@ public class MicrofinanceService {
         
     }
 
-    public String createFeeRequest(String microfinanceUsername, float amount, String user) {
+    public String createFeeRequest(String microfinanceUsername, double amount, String user) {
         String url = baseUrl + "/transactions/service/ecommerce/create-fee-request/";
 
         String jsonBody = String.format(
