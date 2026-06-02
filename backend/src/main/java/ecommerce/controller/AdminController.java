@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ecommerce.Enum.OrderStatus;
 import ecommerce.models.Category;
 import ecommerce.models.Product;
 import ecommerce.service.CategoryService;
 import ecommerce.service.LoginService;
+import ecommerce.service.OrderService;
 import ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +33,7 @@ public class AdminController {
     private final LoginService loginService;
     private final CategoryService categoryService;
     private final ProductService productService;
+    private final OrderService orderService;
 
     @GetMapping("/logins")
     public ResponseEntity<?> getAllLogins(){
@@ -129,6 +132,51 @@ public class AdminController {
         @PageableDefault(page=0, size=10) Pageable pageable){
         try {
             return ResponseEntity.ok(productService.getProductByCategory(categoryId, pageable));
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/orders")
+    public ResponseEntity<?> getAllOrders(){
+        try {
+            return ResponseEntity.ok(orderService.getAllOrders());
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/orders/status/{status}")
+    public ResponseEntity<?> getOrdersByStatus(@PathVariable String status){
+        try {
+            return ResponseEntity.ok(orderService.getOrdersByStatus(
+                OrderStatus.valueOf(status.toUpperCase())
+            ));
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
+    @PutMapping("/orders/{orderId}/status")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable UUID orderId,
+                                            @RequestBody Map<String, String> body){
+        try {
+            return ResponseEntity.ok(orderService.updateOrderStatus(
+                orderId,
+                OrderStatus.valueOf(body.get("status").toUpperCase())
+            ));
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+
+    @GetMapping("/orders/user/{userId}")
+    public ResponseEntity<?> getOrdersByUser(@PathVariable UUID userId){
+        try {
+            return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
         } catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

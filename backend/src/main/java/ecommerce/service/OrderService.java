@@ -246,4 +246,14 @@ public class OrderService {
         order.setOrderStatus(status);
         return orderRepository.save(order);
     }
+
+    public List<Orders> getOrdersByStatus(OrderStatus status){
+        return orderRepository.findByOrderStatus(status);
+    }
+
+    public List<Orders> getOrdersByUserId(UUID userId){
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        return orderRepository.findAllByUser(user);
+    }
 }
