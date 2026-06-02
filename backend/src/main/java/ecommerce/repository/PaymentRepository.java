@@ -12,6 +12,7 @@ import ecommerce.models.Payment;
 public interface PaymentRepository extends JpaRepository<Payment,UUID>{
 
     Optional<Payment> findByOrder(Orders order);
+    Optional<Payment> findByOrderAndUser(Orders order);
     Optional<Payment> findByStatus(PaymentStatus status);
     
 }
