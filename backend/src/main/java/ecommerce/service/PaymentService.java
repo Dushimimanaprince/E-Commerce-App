@@ -99,5 +99,13 @@ public class PaymentService {
         return paymentRepository.findAllByUser(user);
 
     }
+
+    public List<Payment> getAllPayments(){
+        return paymentRepository.findAll();
+    }
+
+    public List<Payment> getPaymentsByStatus(PaymentStatusEnum status){
+        return paymentRepository.findByStatus(status);
+    }
     
 }

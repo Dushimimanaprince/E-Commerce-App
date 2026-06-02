@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import ecommerce.Enum.OrderStatus;
+import ecommerce.Enum.PaymentStatusEnum;
 import ecommerce.models.Category;
 import ecommerce.models.Product;
 import ecommerce.service.CategoryService;
 import ecommerce.service.LoginService;
 import ecommerce.service.OrderService;
+import ecommerce.service.PaymentService;
 import ecommerce.service.ProductService;
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +36,7 @@ public class AdminController {
     private final CategoryService categoryService;
     private final ProductService productService;
     private final OrderService orderService;
+    private final PaymentService paymentService;
 
     @GetMapping("/logins")
     public ResponseEntity<?> getAllLogins(){
@@ -177,6 +180,35 @@ public class AdminController {
     public ResponseEntity<?> getOrdersByUser(@PathVariable UUID userId){
         try {
             return ResponseEntity.ok(orderService.getOrdersByUserId(userId));
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/payments")
+public ResponseEntity<?> getAllPayments(){
+    try {
+        return ResponseEntity.ok(paymentService.getAllPayments());
+    } catch(RuntimeException e){
+        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+    }
+}
+
+    @GetMapping("/payments/user/{userId}")
+    public ResponseEntity<?> getUserPayments(@PathVariable UUID userId){
+        try {
+            return ResponseEntity.ok(paymentService.getUserPayments(userId));
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/payments/status/{status}")
+    public ResponseEntity<?> getPaymentsByStatus(@PathVariable String status){
+        try {
+            return ResponseEntity.ok(paymentService.getPaymentsByStatus(
+                PaymentStatusEnum.valueOf(status.toUpperCase())
+            ));
         } catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
