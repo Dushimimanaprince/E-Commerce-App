@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ecommerce.Enum.UserRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,7 +40,9 @@ public class User {
     private String email;
     @Column(nullable = false, unique = true)
     private String phone;
+    
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)

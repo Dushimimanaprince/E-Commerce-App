@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ecommerce.Enum.OrderStatus;
@@ -21,10 +22,12 @@ import ecommerce.Enum.PaymentStatusEnum;
 import ecommerce.models.Category;
 import ecommerce.models.Product;
 import ecommerce.service.CategoryService;
+import ecommerce.service.HistoryService;
 import ecommerce.service.LoginService;
 import ecommerce.service.OrderService;
 import ecommerce.service.PaymentService;
 import ecommerce.service.ProductService;
+import ecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -37,6 +40,8 @@ public class AdminController {
     private final ProductService productService;
     private final OrderService orderService;
     private final PaymentService paymentService;
+    private final UserService userService;
+    private final HistoryService historyService;
 
     @GetMapping("/logins")
     public ResponseEntity<?> getAllLogins(){
@@ -186,13 +191,13 @@ public class AdminController {
     }
 
     @GetMapping("/payments")
-public ResponseEntity<?> getAllPayments(){
-    try {
-        return ResponseEntity.ok(paymentService.getAllPayments());
-    } catch(RuntimeException e){
-        return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+    public ResponseEntity<?> getAllPayments(){
+        try {
+            return ResponseEntity.ok(paymentService.getAllPayments());
+        } catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
-}
 
     @GetMapping("/payments/user/{userId}")
     public ResponseEntity<?> getUserPayments(@PathVariable UUID userId){
@@ -213,5 +218,30 @@ public ResponseEntity<?> getAllPayments(){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
+
+
+    @GetMapping("/user/all")
+    public ResponseEntity<?> getAllUsers(){
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+
+    @GetMapping("/user/details/{email}")
+    public ResponseEntity<?> viewUserDetails(@PathVariable String email){
+        return ResponseEntity.ok(userService.viewUserDetails(email));
+    }
+
+
+    @PostMapping("/user/set")
+    public ResponseEntity<?> setUser(@RequestParam UUID userId){
+        return ResponseEntity.ok(userService.setUserActive(userId));
+    }
+    
+    @GetMapping("/history/all")
+    public ResponseEntity<?> getAllHistory(){
+        return ResponseEntity.ok(historyService.viewAllHistory());
+    }
+
+
 
 }
