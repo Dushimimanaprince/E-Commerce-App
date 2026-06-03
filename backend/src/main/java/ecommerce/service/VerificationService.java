@@ -5,6 +5,8 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import ecommerce.Enum.ModelEnum;
+import ecommerce.Enum.VerificationEnum;
+import ecommerce.Enum.VerificationStatus;
 import ecommerce.models.Verification;
 import ecommerce.repository.VerificationRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +18,7 @@ public class VerificationService {
     private final VerificationRepository verificationRepository;
     private final EmailService emailService;
 
-    public void generateAndSend(String email, UUID entityId, ModelEnum model){
+    public void generateAndSend(String email, UUID entityId, ModelEnum model, VerificationEnum action,VerificationStatus status){
 
         String code= String.valueOf((int)(Math.random()*900000)+100000);
 
@@ -25,6 +27,8 @@ public class VerificationService {
         verification.setUsed(false);
         verification.setModel(model);
         verification.setEntityId(entityId);
+        verification.setAction(action);
+        verification.setStatus(status);
         verificationRepository.save(verification);
 
         emailService.sendOtp(email, code);

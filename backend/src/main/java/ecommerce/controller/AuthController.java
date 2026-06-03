@@ -54,7 +54,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String,String> body, HttpServletRequest request){
-
         try{
             Map<String,String> response= loginService.login(
                 body.get("email"),
@@ -64,6 +63,47 @@ public class AuthController {
             return ResponseEntity.ok(response);
         }catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    }
+
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
+        try {
+            registerService.sendVerification(body.get("email"));
+            return ResponseEntity.ok(Map.of("message", "Verification code sent successfully to your email"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody Map<String, String> body) {
+        try {
+            registerService.verifyChangePasswordOtp(
+                body.get("email"),
+                body.get("code")
+            );
+            return ResponseEntity.ok(Map.of("message", "OTP verified successfully. You can now change your password."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
+        try {
+            User updatedUser = registerService.changePassword(
+                body.get("email"),
+                body.get("password")
+            );
+            return ResponseEntity.ok(Map.of(
+                "message", "Password changed successfully",
+                "user", updatedUser.getEmail()
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 }

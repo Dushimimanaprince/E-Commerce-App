@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 import ecommerce.Enum.ModelEnum;
+import ecommerce.Enum.VerificationEnum;
+import ecommerce.Enum.VerificationStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,6 +43,12 @@ public class Verification {
 
     @Enumerated(EnumType.STRING)
     private ModelEnum model;
+
+    @Enumerated(EnumType.STRING)
+    private VerificationEnum action;
+
+    @Enumerated(EnumType.STRING)
+    private VerificationStatus status;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
