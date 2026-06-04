@@ -32,11 +32,20 @@ const Login = () => {
 
         try {
             const response = await API.post("/auth/login", formData);
-            const { token } = response.data;
+            const { token,role } = response.data;
+            
 
             if (token) {
                 localStorage.setItem("token", token);
-                navigate("/user/me"); 
+                localStorage.setItem("role", role);
+
+                if(role == "ADMIN"){
+
+                    navigate("/admin/dashboard"); 
+                }else{
+                    navigate("/user/me");
+                }
+                
             } else {
                 setError("Authentication succeeded but no authorization token was found.");
             }
