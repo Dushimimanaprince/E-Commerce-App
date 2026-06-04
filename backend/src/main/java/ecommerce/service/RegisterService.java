@@ -151,4 +151,24 @@ public class RegisterService {
 
         return saved;
     }
+
+    @Transactional
+    public void resendCode(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("The User Not Found with Provided Email"));
+        
+        Verification oldVerification = verificationRepository
+            .findByEntityIdAndAction(user.getUserId(), VerificationEnum.REGISTRATION)
+            .orElseThrow(() -> new RuntimeException("No active registration process found for this email"));
+
+        if (!oldVerification.isExpired()) {
+            throw new RuntimeException("You can't request a new code yet. The current one is still active.");
+        }
+
+        if (oldVerification.getStatus() == VerificationStatus.COMPLETED) {
+            throw new RuntimeException("This account is already verified and active.");
+        }
+
+        verificationService.generateAndSend(email, user.getUserId(), ModelEnum.USER, VerificationEnum.REGISTRATION, VerificationStatus.PENDING);
+    }
 }

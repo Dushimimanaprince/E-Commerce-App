@@ -35,8 +35,6 @@ public class Verification {
     @Column(nullable = false)
     private String code;
 
-    @Column(name="is_used")
-    private boolean isUsed;
 
     @Column(name="entity_id")
     private UUID entityId;

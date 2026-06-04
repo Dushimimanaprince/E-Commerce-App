@@ -24,7 +24,6 @@ public class VerificationService {
 
         Verification verification= new Verification();
         verification.setCode(code);
-        verification.setUsed(false);
         verification.setModel(model);
         verification.setEntityId(entityId);
         verification.setAction(action);

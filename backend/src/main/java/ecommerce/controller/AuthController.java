@@ -52,6 +52,18 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/re-verify")
+    public ResponseEntity<?> reVerify(@RequestBody Map<String,String>body){
+        try{
+            registerService.resendCode(
+                body.get("email")
+            );
+            return ResponseEntity.ok(Map.of("message", "A fresh verification code has been dispatched to your email."));
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String,String> body, HttpServletRequest request){
         try{
