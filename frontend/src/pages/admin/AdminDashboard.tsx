@@ -1,6 +1,9 @@
-import  { useEffect, useState } from "react";
-import AdminLayout from "./AdminLayout";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../../api/axios";
+import AdminLayout from "./AdminLayout";
+
+
 
 interface UserSummary {
     userId: string;
@@ -9,17 +12,40 @@ interface UserSummary {
     active: boolean;
 }
 
+interface UserDetails {
+    userId: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    dob: string;
+    role: string;
+    active: boolean;
+    createdAt: string;
+}
+
 const AdminDashboard = () => {
     const [users, setUsers] = useState<UserSummary[]>([]);
+    const [details, setDetails] = useState<UserDetails | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+    const navigate = useNavigate()
+
+    const role = localStorage.getItem("role")
+
+    if(role != "ADMIN"){
+        navigate("/login")
+        return
+    }
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-
-                const response = await API.get("/admin/user/all");
-                setUsers(response.data);
+                const [usersData, detailsData] = await Promise.all([
+                    API.get("/admin/user/all"),
+                    API.get("/user/me")
+                ])
+                setUsers(usersData.data);
+                setDetails(detailsData.data)
             } catch (err: any) {
                 setError(err.response?.data?.error || "Failed to sync system statistics.");
             } finally {
@@ -29,7 +55,6 @@ const AdminDashboard = () => {
 
         fetchDashboardData();
     }, []);
-
 
     const totalUsers = users.length;
     const activeUsers = users.filter(u => u.active).length;
@@ -59,7 +84,6 @@ const AdminDashboard = () => {
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                
                 <div className="bg-[#141414] border border-[#1f1f1f] rounded-xl p-6 shadow-md">
                     <div className="flex justify-between items-center mb-4">
                         <span className="text-sm font-medium text-[#888888]">Total Accounts</span>
@@ -67,7 +91,6 @@ const AdminDashboard = () => {
                     </div>
                     <p className="text-4xl font-bold text-white">{totalUsers}</p>
                 </div>
-
 
                 <div className="bg-[#141414] border border-[#1f1f1f] rounded-xl p-6 shadow-md">
                     <div className="flex justify-between items-center mb-4">
@@ -86,48 +109,65 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            <div className="bg-[#141414] border border-[#1f1f1f] rounded-xl overflow-hidden shadow-xl">
-                <div className="p-6 border-b border-[#1f1f1f]">
-                    <h3 className="text-lg font-medium text-white">System Directory Logs</h3>
+            {details && (
+                <div className="bg-[#141414] border border-[#1f1f1f] rounded-xl p-6 shadow-xl">
+                    <div className="border-b border-[#1f1f1f] pb-4 mb-6">
+                        <h3 className="text-lg font-medium text-white">Admin Profile</h3>
+                        <p className="text-sm text-[#888888]">Logged in account details</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                        <div className="space-y-1">
+                            <p className="text-xs text-[#888888] uppercase tracking-wider">Full Name</p>
+                            <p className="text-white font-medium">{details.fullName}</p>
+                        </div>
+
+                        <div className="space-y-1">
+                            <p className="text-xs text-[#888888] uppercase tracking-wider">Email</p>
+                            <p className="text-white font-medium">{details.email}</p>
+                        </div>
+
+                        <div className="space-y-1">
+                            <p className="text-xs text-[#888888] uppercase tracking-wider">Phone</p>
+                            <p className="text-white font-medium">{details.phone}</p>
+                        </div>
+
+                        <div className="space-y-1">
+                            <p className="text-xs text-[#888888] uppercase tracking-wider">Date of Birth</p>
+                            <p className="text-white font-medium">{details.dob}</p>
+                        </div>
+
+                        <div className="space-y-1">
+                            <p className="text-xs text-[#888888] uppercase tracking-wider">Role</p>
+                            <span className="bg-blue-950 text-blue-400 text-xs px-2 py-1 rounded-md">
+                                {details.role}
+                            </span>
+                        </div>
+
+                        <div className="space-y-1">
+                            <p className="text-xs text-[#888888] uppercase tracking-wider">Account Status</p>
+                            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                details.active
+                                    ? "bg-green-950 text-green-400"
+                                    : "bg-red-950 text-red-400"
+                            }`}>
+                                {details.active ? "● Active" : "● Inactive"}
+                            </span>
+                        </div>
+
+                        <div className="space-y-1">
+                            <p className="text-xs text-[#888888] uppercase tracking-wider">Member Since</p>
+                            <p className="text-white font-medium">
+                                {new Date(details.createdAt).toLocaleDateString()}
+                            </p>
+                        </div>
+
+                    </div>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
-                        <thead>
-                            <tr className="border-b border-[#1f1f1f] text-[#888888] text-xs font-semibold uppercase tracking-wider bg-[#1a1a1a]/40">
-                                <th className="p-4">Full Name</th>
-                                <th className="p-4">Email Account</th>
-                                <th className="p-4">Authorization State</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-[#1f1f1f]">
-                            {users.slice(0, 5).map((user) => (
-                                <tr key={user.userId} className="hover:bg-[#1a1a1a]/40 transition-colors text-sm">
-                                    <td className="p-4 font-medium text-white">{user.fullName}</td>
-                                    <td className="p-4 text-[#888888]">{user.email}</td>
-                                    <td className="p-4">
-                                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                                            user.active 
-                                                ? "bg-green-950 text-green-400" 
-                                                : "bg-red-950 text-red-400"
-                                        }`}>
-                                            {user.active ? "● Active" : "● Inactive"}
-                                        </span>
-                                    </td>
-                                </tr>
-                            ))}
-                            {users.length === 0 && (
-                                <tr>
-                                    <td colSpan={3} className="p-6 text-center text-sm text-[#888888]">
-                                        No registered profiles detected.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            )}
         </AdminLayout>
     );
 };
 
-export default AdminDashboard;
+export default AdminDashboard;  

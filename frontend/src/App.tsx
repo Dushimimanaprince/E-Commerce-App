@@ -3,6 +3,10 @@ import Signup from "./pages/auth/Signup";
 import Login from "./pages/auth/Login";
 import VerifyAccount from "./pages/auth/VerifyAccount";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AddProduct from "./pages/admin/products/AddProduct";
+import AddCategory from "./pages/admin/products/AddCategory";
+import CategoryView from "./pages/admin/products/ViewCategory";
+import ViewProducts from "./pages/admin/products/ViewProduct";
 
 
 
@@ -20,6 +24,10 @@ function App(){
         <Route path="/login" element={<Login />} />
 
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/product/add" element={<AddProduct />} />
+        <Route path="/admin/product/view" element={<ViewProducts />} />
+        <Route path="/admin/category/add" element={<AddCategory />} />
+        <Route path="/admin/category/view" element={<CategoryView />} />
 
       </Routes>
     
