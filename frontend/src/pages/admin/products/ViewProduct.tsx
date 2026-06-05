@@ -36,7 +36,7 @@ const ViewProducts = () => {
                     const searchResult = response.data.content || response.data;
                     setProduct(Array.isArray(searchResult) ? searchResult : [searchResult]);
                 } else {
-                    response = await API.get(`/products`);
+                    response = await API.get(`/admin/products`);
                     setProduct(response.data.content || []);
                 }
                 setError(""); 
@@ -99,10 +99,12 @@ const ViewProducts = () => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {products.map((prod) => (
-                        <div
-                            key={prod.productId}
-                            className="bg-[#141414] border border-[#1f1f1f] rounded-xl overflow-hidden shadow-xl flex flex-col group hover:border-[#2a2a2a] transition-all duration-300"
-                        >
+
+                    <div
+                        key={prod.productId}
+                        onClick={() => navigate(`/admin/product/details/${prod.productId}`)} 
+                        className="bg-[#141414] border border-[#1f1f1f] rounded-xl overflow-hidden shadow-xl flex flex-col group hover:border-[#2a2a2a] transition-all duration-300 cursor-pointer"
+                    >
                             <div className="w-full h-48 overflow-hidden bg-[#0a0a0a] border-b border-[#1f1f1f]">
                                 <img
                                     src={prod.imageUrl || "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&q=80"}

@@ -7,6 +7,7 @@ import AddProduct from "./pages/admin/products/AddProduct";
 import AddCategory from "./pages/admin/products/AddCategory";
 import CategoryView from "./pages/admin/products/ViewCategory";
 import ViewProducts from "./pages/admin/products/ViewProduct";
+import ProductDetails from "./pages/admin/products/ProductDetails";
 
 
 
@@ -26,6 +27,7 @@ function App(){
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/product/add" element={<AddProduct />} />
         <Route path="/admin/product/view" element={<ViewProducts />} />
+        <Route path="/admin/product/details/:productId" element={<ProductDetails />} />
         <Route path="/admin/category/add" element={<AddCategory />} />
         <Route path="/admin/category/view" element={<CategoryView />} />
 
