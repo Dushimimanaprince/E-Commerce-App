@@ -227,6 +227,16 @@ public class AdminController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @GetMapping("/user/search")
+    public ResponseEntity<?> searchUsers(@RequestParam String userName){
+        try{
+            return ResponseEntity.ok(userService.searchUsers(userName));
+        }catch(RuntimeException e){
+
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    }
+
 
     @GetMapping("/user/details/{userId}")
     public ResponseEntity<?> viewUserDetails(@PathVariable UUID userId){

@@ -90,5 +90,9 @@ public class UserService {
         return saved;
     }
 
+    public List<User> searchUsers(String userName){
+        return userRepository.findByFullNameContainingIgnoreCase(userName);
+    }
+
     
 }
