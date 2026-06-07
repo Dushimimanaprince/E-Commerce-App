@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 // 1. Update interfaces to handle optional nested sub-menus
@@ -27,6 +27,17 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         Products: true 
     });
 
+    useEffect (()=>{
+
+        if(!localStorage.getItem("token")){
+            navigate("/login")
+            return
+        }else if(localStorage.getItem("role") != "ADMIN"){
+            navigate("/login")
+            return
+        }
+
+    } , [navigate])
 
     const menuItems: SidebarItem[] = [
         { name: "Dashboard", path: "/admin/dashboard", icon: "📊" },
@@ -46,7 +57,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 { name: "View Categories", path: "/admin/category/view" }
             ]
         },
-        { name: "Users Management", path: "/admin/users", icon: "👥" },
+        { name: "Users Management", path: "/admin/users/view", icon: "👥" },
         { name: "System History Logs", path: "/admin/history", icon: "📜" },
     ];
 

@@ -8,6 +8,8 @@ import AddCategory from "./pages/admin/products/AddCategory";
 import CategoryView from "./pages/admin/products/ViewCategory";
 import ViewProducts from "./pages/admin/products/ViewProduct";
 import ProductDetails from "./pages/admin/products/ProductDetails";
+import ViewUsers from "./pages/admin/users/ViewUsers";
+import UserDetails from "./pages/admin/users/UserDetails";
 
 
 
@@ -30,6 +32,8 @@ function App(){
         <Route path="/admin/product/details/:productId" element={<ProductDetails />} />
         <Route path="/admin/category/add" element={<AddCategory />} />
         <Route path="/admin/category/view" element={<CategoryView />} />
+        <Route path="/admin/users/view" element={<ViewUsers />} />
+        <Route path="/admin/users/details/:userId" element={<UserDetails />} />
 
       </Routes>
     

@@ -26,7 +26,6 @@ const ProductDetails = () => {
     const [error, setError] = useState<string>("");
     const [actionLoading, setActionLoading] = useState<boolean>(false);
 
-    // --- NEW EDIT MODE STATE TRACKERS ---
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [editForm, setEditForm] = useState({
         productName: "",
@@ -46,7 +45,7 @@ const ProductDetails = () => {
         try {
             const response = await API.get(`/products/details/${productId}`);
             setProduct(response.data);
-            // Pre-seed form state with existing entity fields
+
             setEditForm({
                 productName: response.data.productName,
                 description: response.data.description || "",

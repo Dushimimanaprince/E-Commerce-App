@@ -28,14 +28,24 @@ const AdminDashboard = () => {
     const [details, setDetails] = useState<UserDetails | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string>("");
+
     const navigate = useNavigate()
 
-    const role = localStorage.getItem("role")
+    useEffect (()=>{
 
-    if(role != "ADMIN"){
-        navigate("/login")
-        return
-    }
+        if(!localStorage.getItem("token")){
+            navigate("/login")
+            return
+        }else if(localStorage.getItem("role") != "ADMIN"){
+            navigate("/login")
+            return
+        }
+
+    } , [navigate])
+
+
+
+
 
     useEffect(() => {
         const fetchDashboardData = async () => {
