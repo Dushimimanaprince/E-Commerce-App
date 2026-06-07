@@ -1,10 +1,12 @@
 package ecommerce.service;
 
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +52,7 @@ public class ProductService {
         return productRepository.findByCategoryAndIsActiveTrue(category, pageable);
     }
 
-    public Product createProduct(String productName,String description,double price,int quantity,String imageUrl){
+    public Product createProduct(UUID categoryId,String productName,String description,double price,int quantity,String imageUrl){
 
         String userId= (String) SecurityContextHolder.getContext()
             .getAuthentication()
@@ -58,6 +60,9 @@ public class ProductService {
         
         User user= userRepository.findById(UUID.fromString(userId))
             .orElseThrow(()-> new RuntimeException("The user not Found"));
+        
+        Category category= categoryRepository.findById(categoryId)
+            .orElseThrow(()-> new RuntimeException("The Category not Found"));
 
         Product product= new Product();
 
@@ -71,7 +76,7 @@ public class ProductService {
         if(quantity <=0){
             throw new RuntimeException("Quantity should be above 0");
         }
-
+        product.setCategory(category);
         product.setProductName(productName);
         if(description != null && !description.isBlank()){
             product.setDescription(description);
@@ -138,6 +143,12 @@ public class ProductService {
         
 
         }
+    
+    public Product viewProductDetails(UUID productId){
+
+        return productRepository.findById(productId)
+            .orElseThrow(()-> new RuntimeException("The Product Doesn't Exist"));
+    }
 
     
     public Product deleteProduct(UUID productId){
@@ -160,11 +171,20 @@ public class ProductService {
             return saved;
             }
     
-    public Product searchProduct(String name){
-        return productRepository.findByProductNameContainingIgnoreCase(name)
-            .orElseThrow(() -> new RuntimeException("Product not found"));
+    public List<Product> searchProduct(String name){
+        return productRepository.findByProductNameContainingIgnoreCase(name);
+            
     }
 
 
-    
+    public Product toggleProductStatus(UUID productId) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new RuntimeException("The Product Doesn't Exist"));
+
+        boolean currentStatus = product.isActive();
+        product.setActive(!currentStatus);
+
+        return productRepository.save(product);
+    }
+        
 }

@@ -1,5 +1,6 @@
 package ecommerce.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,6 +18,4 @@ public interface UserRepository extends JpaRepository<User,UUID>{
     Optional<User> findByIsActive(boolean active);
     Optional<User> findByEmail(String email);
     Optional<User> findByPhone(String phone);
-
-    
-}
+    List<User> findByUserNameContainingIgnoreCase(String userName);

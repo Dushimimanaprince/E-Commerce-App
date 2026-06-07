@@ -1,5 +1,6 @@
 package ecommerce.repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ public interface ProductRepository extends JpaRepository<Product,UUID>{
     Page<Product> findByCategory(Category category, Pageable pageable);
     Page<Product> findAll(Pageable pegeable);
     Page<Product> findByIsActiveTrue(Pageable pegeable);
-    Optional<Product> findByProductNameContainingIgnoreCase(String name);
+    List<Product> findByProductNameContainingIgnoreCase(String name);
     Page<Product> findByCategoryAndIsActiveTrue(Category category, Pageable pageable);
     
 }

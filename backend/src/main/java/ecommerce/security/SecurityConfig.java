@@ -55,8 +55,8 @@ public class SecurityConfig {
                 .requestMatchers("/api/cart/**").hasAnyRole("CUSTOMER", "ADMIN")
                 .requestMatchers("/api/payments/**").hasAnyRole("CUSTOMER", "ADMIN")
                 .requestMatchers("/api/orders/**").hasAnyRole("CUSTOMER", "ADMIN")
-                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/product/**").permitAll()
-                .requestMatchers("/api/product/**").hasRole("ADMIN")
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/products/**").permitAll()
+                .requestMatchers("/api/products/**").hasAnyRole("ADMIN")
 
                 .anyRequest().authenticated()
             );

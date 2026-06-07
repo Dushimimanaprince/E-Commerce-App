@@ -3,8 +3,11 @@ package ecommerce.models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -32,7 +35,9 @@ public class Product {
     @Column(name="product_name",nullable = false)
     private String productName;
 
+    @Column(columnDefinition = "TEXT") 
     private String description;
+
 
     @Column(nullable = false)
     private double price;
@@ -65,13 +70,12 @@ public class Product {
         this.updatedAt= LocalDateTime.now();
         if(this.quantity <= 0){
             this.isActive=false;
-        }else{
-            this.isActive=true;
         }
     }
 
-    @ManyToOne
-    @JoinColumn(name="category_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnoreProperties({"products", "hibernateLazyInitializer", "handler"}) 
     private Category category;
 
 

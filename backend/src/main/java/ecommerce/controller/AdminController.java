@@ -93,14 +93,15 @@ public class AdminController {
     public ResponseEntity<?> createProduct(@RequestBody Map<String,String>body){
 
         try{
-            Product product= productService.createProduct(
+            productService.createProduct(
+                UUID.fromString(body.get("category")),
                 body.get("productName"),
                 body.get("description"),
                 Double.parseDouble(body.get("price")),
                 Integer.parseInt(body.get("quantity")),
                 body.get("imageUrl")
             );
-            return ResponseEntity.ok(product);
+            return ResponseEntity.ok(Map.of("message","Item Created Successfully"));
         }catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
         }
@@ -110,7 +111,7 @@ public class AdminController {
     public ResponseEntity<?> updateProduct(@PathVariable UUID productId,@RequestBody Map<String,String>body){
 
         try{
-            Product product= productService.updateProduct(
+            productService.updateProduct(
                 productId,
                 body.get("productName"),
                 body.get("description"),
@@ -118,7 +119,8 @@ public class AdminController {
                 Integer.parseInt(body.get("quantity")),
                 body.get("imageUrl")
             );
-            return ResponseEntity.ok(product);
+            return ResponseEntity.ok(Map.of(
+                "message","Product Updated Successfully"));
         }catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
         }
@@ -226,9 +228,9 @@ public class AdminController {
     }
 
 
-    @GetMapping("/user/details/{email}")
-    public ResponseEntity<?> viewUserDetails(@PathVariable String email){
-        return ResponseEntity.ok(userService.viewUserDetails(email));
+    @GetMapping("/user/details/{userId}")
+    public ResponseEntity<?> viewUserDetails(@PathVariable UUID userId){
+        return ResponseEntity.ok(userService.viewUserDetails(userId));
     }
 
 
@@ -240,6 +242,21 @@ public class AdminController {
     @GetMapping("/history/all")
     public ResponseEntity<?> getAllHistory(){
         return ResponseEntity.ok(historyService.viewAllHistory());
+    }
+
+    @PutMapping("/product/{productId}/toggle-active")
+    public ResponseEntity<?> toggleProductActive(@PathVariable UUID productId) {
+        try {
+            Product updatedProduct = productService.toggleProductStatus(productId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Product status updated successfully",
+                "active", updatedProduct.isActive(),    
+                "isActive", updatedProduct.isActive()  
+            ));
+        } catch(RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
     }
 
 

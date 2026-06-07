@@ -27,9 +27,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User viewUserDetails(String email){
+    public User viewUserDetails(UUID userId){
         
-        return userRepository.findByEmail(email)
+        return userRepository.findById(userId)
             .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"User Not Found"));
         
     }

@@ -56,10 +56,11 @@ public class ProductController {
         }
     }
 
+        @GetMapping("/details/{productId}")
+        public ResponseEntity<?> viewProductDetails(@PathVariable UUID productId){
 
-
-
-
+            return ResponseEntity.ok(productService.viewProductDetails(productId));
+        }
    
     
 }
