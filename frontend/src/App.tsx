@@ -10,6 +10,7 @@ import ViewProducts from "./pages/admin/products/ViewProduct";
 import ProductDetails from "./pages/admin/products/ProductDetails";
 import ViewUsers from "./pages/admin/users/ViewUsers";
 import UserDetails from "./pages/admin/users/UserDetails";
+import HomePage from "./pages/user/Home";
 
 
 
@@ -21,7 +22,7 @@ function App(){
 
       <Routes>
 
-        <Route path="/" element={<Navigate to="/signup"/>}/>
+        <Route path="/" element={<Navigate to="/products"/>}/>
         <Route path="/signup" element={<Signup />} />
         <Route path="/verify" element={<VerifyAccount />} />
         <Route path="/login" element={<Login />} />
@@ -34,6 +35,10 @@ function App(){
         <Route path="/admin/category/view" element={<CategoryView />} />
         <Route path="/admin/users/view" element={<ViewUsers />} />
         <Route path="/admin/users/details/:userId" element={<UserDetails />} />
+
+        <Route path="/products" element={<HomePage />} />
+
+
 
       </Routes>
     

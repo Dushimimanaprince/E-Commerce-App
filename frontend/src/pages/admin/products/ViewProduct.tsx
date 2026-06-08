@@ -14,9 +14,12 @@ const ViewProducts = () => {
     const [error, setError] = useState<string>("");
     const [loading, setLoading] = useState<boolean>(true);
     const [products, setProduct] = useState<ProductField[]>([]);
-    
     const [searchQuery, setSearchQuery] = useState<string>("");
-    
+
+
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [totalPages, setTotalPages] = useState<number>(0);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -35,15 +38,16 @@ const ViewProducts = () => {
                     response = await API.get(`/products/search?name=${searchQuery}`);
                     const searchResult = response.data.content || response.data;
                     setProduct(Array.isArray(searchResult) ? searchResult : [searchResult]);
+                    setTotalPages(0);
                 } else {
-                    response = await API.get(`/admin/products`);
+                    response = await API.get(`/products?page=${currentPage}&size=10`);
                     setProduct(response.data.content || []);
+                    setTotalPages(response.data.totalPages || 0); 
                 }
                 setError(""); 
             } catch (err: any) {
-
                 setProduct([]);
-                setError(err.response?.data?.error || "No matching product keys detected.");
+                setError(err.response?.data?.error || "Failed to load product listings.");
             } finally {
                 setLoading(false);
             }
@@ -54,10 +58,10 @@ const ViewProducts = () => {
         }, 300);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [searchQuery]);
-
+    }, [searchQuery, currentPage]); 
     return (
         <AdminLayout>
+
             <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <h2 className="text-2xl font-semibold text-white mb-2">Inventory Catalog</h2>
@@ -65,24 +69,17 @@ const ViewProducts = () => {
                 </div>
 
                 <div className="relative w-full md:w-80">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#555555]">
-                        🔍
-                    </span>
+                    <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#555555]">🔍</span>
                     <input
                         type="text"
                         placeholder="Search product instances..."
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full bg-[#141414] border border-[#1f1f1f] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#e5e5e5] placeholder-[#555555] focus:outline-none focus:border-[#555555] focus:bg-[#1a1a1a] transition-all"
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setCurrentPage(0);
+                        }}
+                        className="w-full bg-[#141414] border border-[#1f1f1f] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#e5e5e5] placeholder-[#555555] focus:outline-none focus:border-[#555555]"
                     />
-                    {searchQuery && (
-                        <button 
-                            onClick={() => setSearchQuery("")}
-                            className="absolute inset-y-0 right-0 flex items-center pr-3 text-[#555555] hover:text-white"
-                        >
-                            ✕
-                        </button>
-                    )}
                 </div>
             </div>
 
@@ -99,43 +96,47 @@ const ViewProducts = () => {
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {products.map((prod) => (
-
-                    <div
-                        key={prod.productId}
-                        onClick={() => navigate(`/admin/product/details/${prod.productId}`)} 
-                        className="bg-[#141414] border border-[#1f1f1f] rounded-xl overflow-hidden shadow-xl flex flex-col group hover:border-[#2a2a2a] transition-all duration-300 cursor-pointer"
-                    >
-                            <div className="w-full h-48 overflow-hidden bg-[#0a0a0a] border-b border-[#1f1f1f]">
-                                <img
-                                    src={prod.imageUrl || "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&q=80"}
-                                    alt={prod.productName}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                    onError={(e) => {
-                                        (e.target as HTMLImageElement).src = "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=600&q=80";
-                                    }}
-                                />
-                            </div>
-
-                            <div className="p-5 flex-1 flex flex-col justify-between">
-                                <div>
-                                    <h3 className="text-lg font-semibold text-white mb-2 tracking-wide truncate">
-                                        {prod.productName}
-                                    </h3>
-                                    <p className="text-sm text-[#888888] line-clamp-3 leading-relaxed">
-                                        {prod.description || "No supplemental descriptions attached to this SKU registry instance."}
-                                    </p>
-                                </div>
+                        <div
+                            key={prod.productId}
+                            onClick={() => navigate(`/admin/product/details/${prod.productId}`)}
+                            className="bg-[#141414] border border-[#1f1f1f] rounded-xl overflow-hidden shadow-xl flex flex-col group hover:border-[#2a2a2a] transition-all duration-300 cursor-pointer"
+                        >
+                            <img src={prod.imageUrl} alt={prod.productName} className="w-full h-48 object-cover" />
+                            <div className="p-5">
+                                <h3 className="text-lg font-semibold text-white truncate">{prod.productName}</h3>
+                                <p className="text-sm text-[#888888] line-clamp-2 mt-1">{prod.description}</p>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {products.length === 0 && !loading && (
-                <div className="text-center py-12 text-sm text-[#555555] bg-[#141414] rounded-xl border border-[#1f1f1f] mt-4">
-                    📦 No products matched your query criteria.
+            {totalPages > 1 && searchQuery.trim() === "" && (
+                <div className="mt-12 flex items-center justify-between border-t border-[#1f1f1f] pt-6">
+                    <p className="text-xs text-[#555555]">
+                        Showing page <span className="text-zinc-300 font-medium">{currentPage + 1}</span> of <span className="text-zinc-300 font-medium">{totalPages}</span>
+                    </p>
+
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
+                            disabled={currentPage === 0}
+                            className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#141414] border border-[#1f1f1f] text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#1a1a1a] transition-all"
+                        >
+                            ◀ Previous
+                        </button>
+
+                        <button
+                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1))}
+                            disabled={currentPage >= totalPages - 1}
+                            className="px-4 py-2 text-xs font-semibold rounded-xl bg-[#141414] border border-[#1f1f1f] text-gray-300 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#1a1a1a] transition-all"
+                        >
+                            Next ▶
+                        </button>
+                    </div>
                 </div>
             )}
+
         </AdminLayout>
     );
 };

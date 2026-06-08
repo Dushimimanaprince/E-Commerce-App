@@ -43,7 +43,7 @@ const Login = () => {
 
                     navigate("/admin/dashboard"); 
                 }else{
-                    navigate("/user/me");
+                    navigate("/products");
                 }
                 
             } else {
