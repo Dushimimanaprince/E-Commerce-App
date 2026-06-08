@@ -53,7 +53,7 @@ const HomePage = () => {
                     setProduct(dataResults);
                     setTotalPages(response.data.totalPages || 0);
                 } else {
-                    response = await API.get(`/products?page=${currentPage}&size=10`);
+                    response = await API.get(`/products?page=${currentPage}&size=12`);
                     setProduct(response.data.content || response.data || []);
                     setTotalPages(response.data.totalPages || 0);
                 }
@@ -121,7 +121,9 @@ const HomePage = () => {
                     <>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                             {product.map((p) => (
-                                <div key={p.productId} className="bg-[#141414] border border-[#1f1f1f] rounded-xl overflow-hidden">
+                                <div key={p.productId} 
+                                onClick={() => navigate(`/products/details/${p.productId}`)}
+                                className="bg-[#141414] border border-[#1f1f1f] rounded-xl overflow-hidden">
                                     <img src={p.imageUrl} alt={p.productName} className="w-full h-48 object-cover" />
                                     <div className="p-4">
                                         <h3 className="font-semibold text-sm">{p.productName}</h3>

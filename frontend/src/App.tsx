@@ -7,10 +7,12 @@ import AddProduct from "./pages/admin/products/AddProduct";
 import AddCategory from "./pages/admin/products/AddCategory";
 import CategoryView from "./pages/admin/products/ViewCategory";
 import ViewProducts from "./pages/admin/products/ViewProduct";
-import ProductDetails from "./pages/admin/products/ProductDetails";
+
 import ViewUsers from "./pages/admin/users/ViewUsers";
 import UserDetails from "./pages/admin/users/UserDetails";
 import HomePage from "./pages/user/Home";
+import ProductDetails from "./pages/admin/products/ProductDetails";
+import ProductPage from "./pages/user/ProductPage";
 
 
 
@@ -37,6 +39,7 @@ function App(){
         <Route path="/admin/users/details/:userId" element={<UserDetails />} />
 
         <Route path="/products" element={<HomePage />} />
+        <Route path="/products/details/:productId" element={<ProductPage />} />
 
 
 
