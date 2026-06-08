@@ -36,7 +36,7 @@ export const UserNavbar = () => {
     const navigationLinks = [
         { name: "Home", path: "/", icon: "🏠" },
         ...(user ? [
-            { name: "Cart", path: "/cart", icon: "🛒" },
+            { name: "Cart", path: "/user/cart", icon: "🛒" },
             { name: "Orders", path: "/orders", icon: "📦" },
             { name: "Payment", path: "/payment", icon: "💳" }
         ] : [])

@@ -13,6 +13,7 @@ import UserDetails from "./pages/admin/users/UserDetails";
 import HomePage from "./pages/user/Home";
 import ProductDetails from "./pages/admin/products/ProductDetails";
 import ProductPage from "./pages/user/ProductPage";
+import Cart from "./pages/Cart/CartItems";
 
 
 
@@ -40,6 +41,7 @@ function App(){
 
         <Route path="/products" element={<HomePage />} />
         <Route path="/products/details/:productId" element={<ProductPage />} />
+        <Route path="/user/cart" element={<Cart />} />
 
 
 
