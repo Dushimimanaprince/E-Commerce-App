@@ -2,6 +2,8 @@ package ecommerce.models;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,8 +32,9 @@ public class OrderItem {
 
     private double price;
 
-    @ManyToOne
+        @ManyToOne
     @JoinColumn(name="order_id")
+    @JsonIgnoreProperties({"orderItem", "payment", "user", "hibernateLazyInitializer", "handler"})
     private Orders orders;
 
 

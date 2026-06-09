@@ -244,8 +244,8 @@ public class AdminController {
     }
 
 
-    @PostMapping("/user/set")
-    public ResponseEntity<?> setUser(@RequestParam UUID userId){
+    @PutMapping("/user/set/{userId}")
+    public ResponseEntity<?> setUser(@PathVariable UUID userId){
         return ResponseEntity.ok(userService.setUserActive(userId));
     }
     

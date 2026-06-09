@@ -30,25 +30,24 @@ public class MicrofinanceService {
 
     private HttpHeaders headers(){
         HttpHeaders headers= new HttpHeaders();
-        headers.set("X-Api-Key", apiKey);
+        headers.set("x-api-Key", apiKey);
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
     }
 
     public Boolean validateUser(String microfinceUsername){
+        String url = baseUrl + "/transactions/service/ecommerce/validate-user/?username=" + microfinceUsername;
 
-        String url= baseUrl+"/transactions/service/ecommerce/validate-user/?username="+microfinceUsername;
-
-        try{
-
-            restTemplate.exchange(url,HttpMethod.GET,
-                new HttpEntity<>(headers()),Map.class);
+        try {
+            // Build the entity container with headers explicitly included
+            HttpEntity<Void> entity = new HttpEntity<>(headers());
             
+            // Pass the entity container as the 3rd parameter
+            restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
             return true;
-        }catch(HttpClientErrorException e){
+        } catch(HttpClientErrorException e) {
             return false;
         }
-        
     }
 
     public String createFeeRequest(String microfinanceUsername, double amount, String user) {

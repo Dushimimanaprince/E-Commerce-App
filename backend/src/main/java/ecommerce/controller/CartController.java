@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ecommerce.models.CartItem;
 import ecommerce.service.CartService;
 import lombok.RequiredArgsConstructor;
 
@@ -37,11 +36,11 @@ public class CartController {
     public ResponseEntity<?> addToCart(@PathVariable UUID productId,
                                        @RequestBody Map<String, String> body){
         try {
-            CartItem item = cartService.addCartItem(
+            cartService.addCartItem(
                 productId,
                 Integer.parseInt(body.get("quantity"))
             );
-            return ResponseEntity.ok(item);
+            return ResponseEntity.ok(Map.of("mesaage","Product Added to Cart Successfully"));
         } catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
@@ -51,11 +50,11 @@ public class CartController {
     public ResponseEntity<?> updateCartItem(@PathVariable UUID cartItemId,
                                             @RequestBody Map<String, String> body){
         try {
-            CartItem item = cartService.updateCartItem(
+            cartService.updateCartItem(
                 cartItemId,
                 Integer.parseInt(body.get("quantity"))
             );
-            return ResponseEntity.ok(item);
+            return ResponseEntity.ok(Map.of("mesaage","Product Quantity Updated Successfully"));
         } catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

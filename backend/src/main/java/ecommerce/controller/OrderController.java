@@ -1,5 +1,6 @@
 package ecommerce.controller;
 
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import ecommerce.models.Orders;
 import ecommerce.service.OrderService;
 import lombok.RequiredArgsConstructor;
 
@@ -57,9 +59,24 @@ public class OrderController {
     @PostMapping("/create/from-cart")
     public ResponseEntity<?> createOrderFromCart(){
         try {
-            return ResponseEntity.ok(orderService.createOrderFromCart());
+            Orders savedOrder = orderService.createOrderFromCart();
+            return ResponseEntity.ok(Map.of(
+                "message", "All Items Added to Orders Successfully",
+                "totalPrice", savedOrder.getTotalPrice()
+            ));
         } catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/create/cart/{cartItemId}")
+    public ResponseEntity<?> createCartOrder(@PathVariable UUID cartItemId){
+        try{
+            orderService.createOrderCart(cartItemId);
+
+            return ResponseEntity.ok(Map.of("message","Product Added To Orders"));
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
         }
     }
 
@@ -81,7 +98,8 @@ public class OrderController {
     @DeleteMapping("/cancel/{orderId}")
     public ResponseEntity<?> cancelOrder(@PathVariable UUID orderId){
         try {
-            return ResponseEntity.ok(orderService.deleteOrders(orderId));
+            orderService.deleteOrders(orderId);
+            return ResponseEntity.ok(Map.of("message","Order Deleted Successfully"));
         } catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

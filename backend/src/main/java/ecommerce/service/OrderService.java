@@ -46,13 +46,11 @@ public class OrderService {
     }
 
 
-    public List<OrderItem> viewOrderDetails(UUID orderId){
-        Orders order = orderRepository.findById(orderId)
+    public Orders viewOrderDetails(UUID orderId){
+        return orderRepository.findById(orderId)
             .orElseThrow(() -> new RuntimeException("Order not found"));
-
-        return orderItemRepository.findAllByOrders(order);
     }
-
+    
    public Orders createOrder(UUID productId, int quantity){
         String userId = (String) SecurityContextHolder.getContext()
             .getAuthentication()
@@ -99,6 +97,42 @@ public class OrderService {
         return savedOrder;
     }
 
+    public Orders createOrderCart(UUID cartId){
+
+        String userId = (String) SecurityContextHolder.getContext()
+            .getAuthentication()
+            .getPrincipal();
+
+        User user = userRepository.findById(UUID.fromString(userId))
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        CartItem cartItem= cartItemsRepository.findById(cartId)
+            .orElseThrow(()-> new RuntimeException("The Cart Item not Found"));
+
+        Double totalPrice= cartItem.getQuantity() * cartItem.getProduct().getPrice();
+
+        Orders order= new Orders();  
+        order.setUser(user);     
+        order.setOrderStatus(OrderStatus.PENDING);
+        order.setActive(true);
+        order.setTotalPrice(totalPrice);
+        Orders savedOrder = orderRepository.save(order); 
+
+        OrderItem orderItem = new OrderItem();
+        orderItem.setOrders(savedOrder);
+        orderItem.setProduct(cartItem.getProduct());
+        orderItem.setPrice(cartItem.getProduct().getPrice()); 
+        orderItem.setQuantity(cartItem.getQuantity());
+        orderItemRepository.save(orderItem);
+
+        cartItem.setActive(false);
+        cartItemsRepository.save(cartItem);
+
+        historyService.log("Order placed from cart", UserRole.CUSTOMER, ModelEnum.ORDERS, user);
+
+        return savedOrder;        
+    }
+
     public Orders createOrderFromCart(){
         String userId = (String) SecurityContextHolder.getContext()
             .getAuthentication()
@@ -116,7 +150,6 @@ public class OrderService {
             throw new RuntimeException("Cart is empty");
         }
 
-
         for(CartItem cartItem : cartItems){
             Product product = cartItem.getProduct();
 
@@ -127,7 +160,6 @@ public class OrderService {
                 throw new RuntimeException("Not enough stock for " + product.getProductName());
             }
         }
-
 
         double totalPrice = cartItems.stream()
             .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
@@ -140,8 +172,6 @@ public class OrderService {
         order.setTotalPrice(totalPrice);
         Orders savedOrder = orderRepository.save(order);
 
-
-
         for(CartItem cartItem : cartItems){
             Product product = cartItem.getProduct();
 
@@ -152,7 +182,6 @@ public class OrderService {
             orderItem.setQuantity(cartItem.getQuantity());
             orderItemRepository.save(orderItem);
 
-
             product.setQuantity(product.getQuantity() - cartItem.getQuantity());
             productRepository.save(product);
 
@@ -160,7 +189,7 @@ public class OrderService {
             cartItemsRepository.save(cartItem);
         }
 
-        historyService.log("Order placed from cart", UserRole.CUSTOMER, ModelEnum.ORDERS, user);
+        historyService.log("Order placed from cart. Total amount: " + totalPrice + " RWF", UserRole.CUSTOMER, ModelEnum.ORDERS, user);
 
         return savedOrder;
     }

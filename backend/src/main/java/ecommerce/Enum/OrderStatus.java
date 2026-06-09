@@ -3,7 +3,8 @@ package ecommerce.Enum;
 public enum OrderStatus {
 
     PENDING,
-    DELIVERED,
+    PURCHASED,
+    PAID,
     CANCELLED,
     EXPIRED
     

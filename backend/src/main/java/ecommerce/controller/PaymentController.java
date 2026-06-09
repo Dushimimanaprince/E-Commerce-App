@@ -36,6 +36,15 @@ public class PaymentController {
         }
     }
 
+    @GetMapping("/details/{paymentId}")
+    public ResponseEntity<?> viewDetails(@PathVariable UUID paymentId){
+        try{
+            return ResponseEntity.ok(paymentService.viewPaymentDetails(paymentId));
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    } 
+
     @GetMapping
     public ResponseEntity<?> getMyPayments(){
         try {

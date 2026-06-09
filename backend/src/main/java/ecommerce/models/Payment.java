@@ -3,6 +3,7 @@ package ecommerce.models;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import ecommerce.Enum.PaymentStatusEnum;
 import jakarta.persistence.Column;
@@ -47,6 +48,7 @@ public class Payment {
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
+    
 
    
     @PrePersist
@@ -56,6 +58,7 @@ public class Payment {
 
     @OneToOne
     @JoinColumn(name="order_id")
+    @JsonIgnoreProperties({"payment", "user", "hibernateLazyInitializer", "handler"})
     private Orders order;
 
     @ManyToOne

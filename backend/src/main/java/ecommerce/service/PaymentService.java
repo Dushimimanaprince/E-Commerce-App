@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import ecommerce.Enum.ModelEnum;
+import ecommerce.Enum.OrderStatus;
 import ecommerce.Enum.PaymentStatusEnum;
 import ecommerce.Enum.UserRole;
 import ecommerce.models.Orders;
@@ -31,53 +32,57 @@ public class PaymentService {
 
     public Payment initiateFeePayment(String microfinanceUsername, UUID orderId){
 
-        String userId = (String) SecurityContextHolder.getContext()
-            .getAuthentication()
-            .getPrincipal();
+            String userId = (String) SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getPrincipal();
 
-        User user = userRepository.findById(UUID.fromString(userId))
-            .orElseThrow(() -> new RuntimeException("User not found"));
+            User user = userRepository.findById(UUID.fromString(userId))
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Orders order = orderRepository.findById(orderId)
-            .orElseThrow(() -> new RuntimeException("Order not found"));
+            Orders order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
 
-        if(!order.getUser().getUserId().equals(user.getUserId())){
-            throw new RuntimeException("You can only pay for your own orders");
-        }
+            if(!order.getUser().getUserId().equals(user.getUserId())){
+                throw new RuntimeException("You can only pay for your own orders");
+            }
 
-        if(paymentRepository.findByOrder(order).isPresent()){
-            throw new RuntimeException("Payment already initiated for this order");
-        }
+            if(paymentRepository.findByOrder(order).isPresent()){
+                throw new RuntimeException("Payment already initiated for this order");
+            }
 
-        if(!microfinanceService.validateUser(microfinanceUsername)){
-            throw new RuntimeException("Microfinance username not found");
-        }
+            if(!microfinanceService.validateUser(microfinanceUsername)){
+                throw new RuntimeException("Microfinance username not found");
+            }
 
-        String requestId = microfinanceService.createFeeRequest(
-            microfinanceUsername,
-            order.getTotalPrice(),
-            user.getFullName()
-        );
+            String requestId = microfinanceService.createFeeRequest(
+                microfinanceUsername,
+                order.getTotalPrice(),
+                user.getFullName()
+            );
 
-        if(requestId == null){
-            throw new RuntimeException("Failed to create payment request");
-        }
+            if(requestId == null){
+                throw new RuntimeException("Failed to create payment request");
+            }
 
-        Payment payment = new Payment();
-        payment.setAmount(order.getTotalPrice());
-        payment.setOrder(order);
-        payment.setUser(user);
-        payment.setTransactionId(requestId);
-        payment.setStatus(PaymentStatusEnum.PENDING);
-        payment.setActive(true);
+            order.setOrderStatus(OrderStatus.PURCHASED);
+            Orders updatedOrder = orderRepository.save(order);
 
-        Payment saved = paymentRepository.save(payment);
+            Payment payment = new Payment();
+            payment.setAmount(updatedOrder.getTotalPrice());
+            payment.setOrder(updatedOrder); 
+            payment.setUser(user);
+            payment.setTransactionId(requestId);
+            payment.setStatus(PaymentStatusEnum.PENDING);
+            payment.setActive(true);
 
-        historyService.log("User: "+order.getUser().getFullName()+" Payment initiated: " + order.getTotalPrice(),
-            UserRole.CUSTOMER, ModelEnum.PAYMENT, user);
+            Payment saved = paymentRepository.save(payment);
 
-        return saved;
+            historyService.log("User: " + updatedOrder.getUser().getFullName() + " Payment initiated: " + updatedOrder.getTotalPrice(),
+                UserRole.CUSTOMER, ModelEnum.PAYMENT, user);
+
+            return saved;
     }
+
     public List<Payment> getMyPayments(){
 
         String userId= (String) SecurityContextHolder.getContext()
@@ -106,6 +111,17 @@ public class PaymentService {
 
     public List<Payment> getPaymentsByStatus(PaymentStatusEnum status){
         return paymentRepository.findByStatus(status);
+    }
+
+    public Orders viewPaymentDetails(UUID paymentId){
+
+        Payment payment= paymentRepository.findById(paymentId)
+            .orElseThrow(()-> new RuntimeException("The Payment not Found"));
+        
+        return  orderRepository.findByPayment(payment)
+            .orElseThrow(()-> new RuntimeException("The Order not Found"));
+
+        
     }
     
 }
