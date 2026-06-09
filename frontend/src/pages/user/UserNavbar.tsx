@@ -37,7 +37,7 @@ export const UserNavbar = () => {
         { name: "Home", path: "/", icon: "🏠" },
         ...(user ? [
             { name: "Cart", path: "/user/cart", icon: "🛒" },
-            { name: "Orders", path: "/orders", icon: "📦" },
+            { name: "Orders", path: "/user/orders", icon: "📦" },
             { name: "Payment", path: "/payment", icon: "💳" }
         ] : [])
     ];
