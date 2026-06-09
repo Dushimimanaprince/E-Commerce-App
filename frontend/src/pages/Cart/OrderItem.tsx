@@ -49,7 +49,10 @@ const OrderPage = () => {
     const fetchOrder = async () => {
         try {
             const response = await API.get(`/orders`);
-            setOrder(response.data.content || response.data || []);
+            const cleanArray = Array.isArray(response.data) 
+                ? response.data 
+                : (response.data?.content || []);
+            setOrder(cleanArray);
         } catch (err: any) {
             setError(err.response?.data?.error || "Failed to load orders");
         } finally {
@@ -65,23 +68,19 @@ const OrderPage = () => {
         fetchOrder();
     }, []);
 
-    useEffect(() => {
-        if (!selectOrderId) return;
-        
-        const fetchDetails = async () => {
-            setDetailsLoading(true);
-            try {
-                const response = await API.get(`/orders/${selectOrderId}`);
-                setDetails(response.data);
-            } catch (err: any) {
-                setError(err.response?.data?.error || "Failed to load order item details");
-            } finally {
-                setDetailsLoading(false);
-            }
-        };
-
-        fetchDetails();
-    }, [selectOrderId]);
+    const handleOpenOrderDetails = async (orderId: string) => {
+        setSelectedOrderId(orderId);
+        setDetailsLoading(true);
+        setShowOrder(true);
+        try {
+            const response = await API.get(`/orders/${orderId}`);
+            setDetails(response.data);
+        } catch (err: any) {
+            setError(err.response?.data?.error || "Failed to load order item details");
+        } finally {
+            setDetailsLoading(false);
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -99,13 +98,13 @@ const OrderPage = () => {
         try {
             const response = await API.post(`/payments/initiate/${selectOrderId}`, formData);
             setPaymentSuccess(response.data?.message || "Payment request sent successfully!");
-            fetchOrder();
+            await fetchOrder();
             setTimeout(() => {
                 setShowPayment(false);
                 setPaymentSuccess("");
-            }, 5000);
+            }, 3000);
         } catch (err: any) {
-            setPaymentError(err.response?.data?.error);
+            setPaymentError(err.response?.data?.error || "Payment routing failed");
         } finally {
             setPaymentLoading(false);
         }
@@ -120,7 +119,7 @@ const OrderPage = () => {
                 setSuccess("");
             }, 5000);
         } catch (err: any) {
-            setError(err.response?.data?.error);
+            setError(err.response?.data?.error || "Failed to cancel order");
             setTimeout(() => {
                 setError("");
             }, 5000);
@@ -189,7 +188,7 @@ const OrderPage = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-[#1f1f1f]">
-                                {order.map((o) => (
+                                {Array.isArray(order) && order.map((o) => (
                                     <tr key={o.orderId} className="hover:bg-[#1a1a1a]/20 transition-colors text-sm">
                                         <td className="px-6 py-4 text-blue-400 font-medium max-w-xs truncate" title={o.orderItem?.map(item => item.product?.productName).join(", ")}>
                                             {o.orderItem && o.orderItem.length > 0 
@@ -206,6 +205,8 @@ const OrderPage = () => {
                                                     ? "bg-yellow-950/40 border-yellow-800/40 text-yellow-400"
                                                     : o.orderStatus === "PAID"
                                                     ? "bg-emerald-950/40 border-emerald-800/40 text-emerald-400"
+                                                    : o.orderStatus === "PURCHASED"
+                                                    ? "bg-blue-40/40 border-blue-400/40 text-blue-400" 
                                                     : "bg-red-950/40 border-red-800/40 text-red-400"
                                             }`}>
                                                 {o.orderStatus}
@@ -217,10 +218,7 @@ const OrderPage = () => {
                                         <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
                                             <div className="flex justify-end gap-2">
                                                 <button
-                                                    onClick={() => {
-                                                        setSelectedOrderId(o.orderId);
-                                                        setShowOrder(true);
-                                                    }}
+                                                    onClick={() => handleOpenOrderDetails(o.orderId)}
                                                     className="text-xs px-3 py-1.5 rounded-lg border bg-blue-900/20 border-blue-800/50 text-blue-400 hover:bg-blue-900/40 transition-all"
                                                 >
                                                     View Details
@@ -260,7 +258,7 @@ const OrderPage = () => {
                             <div className="flex justify-between items-center mb-6 border-b border-[#1f1f1f] pb-4">
                                 <div>
                                     <h2 className="text-xl font-semibold text-white">Invoice Blueprint Overview</h2>
-                                    <p className="text-xs text-[#888888] font-mono mt-1">ID: {details?.orderId}</p>
+                                    <p className="text-xs text-[#888888] font-mono mt-1">ID: {selectOrderId}</p>
                                 </div>
                                 <button 
                                     onClick={() => setShowOrder(false)}
@@ -377,3 +375,5 @@ const OrderPage = () => {
 };
 
 export default OrderPage;
+
+

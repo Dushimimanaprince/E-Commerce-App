@@ -15,6 +15,7 @@ import ProductDetails from "./pages/admin/products/ProductDetails";
 import ProductPage from "./pages/user/ProductPage";
 import Cart from "./pages/Cart/CartItems";
 import OrderPage from "./pages/Cart/OrderItem";
+import Payment from "./pages/Cart/Payments";
 
 
 
@@ -44,6 +45,7 @@ function App(){
         <Route path="/products/details/:productId" element={<ProductPage />} />
         <Route path="/user/cart" element={<Cart />} />
         <Route path="/user/orders" element={<OrderPage />} />
+        <Route path="/user/payments" element={<Payment/>} />
 
 
 
