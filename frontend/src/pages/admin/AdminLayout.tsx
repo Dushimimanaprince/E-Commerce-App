@@ -57,7 +57,8 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 { name: "View Categories", path: "/admin/category/view" }
             ]
         },
-        { name: "Users Management", path: "/admin/users/view", icon: "👥" },
+        { name: "Users Management", path: "/admin/users/view", icon: "👥" },  
+        { name: "Payments", path: "/admin/payment", icon: "💳" },  
         { name: "System History Logs", path: "/admin/history", icon: "📜" },
     ];
 

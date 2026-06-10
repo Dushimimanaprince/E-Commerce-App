@@ -16,6 +16,8 @@ import ProductPage from "./pages/user/ProductPage";
 import Cart from "./pages/Cart/CartItems";
 import OrderPage from "./pages/Cart/OrderItem";
 import Payment from "./pages/Cart/Payments";
+import ViewPayments from "./pages/admin/cart/PaymentPage";
+import PaymentDetails from "./pages/admin/cart/PaymentDetails";
 
 
 
@@ -40,6 +42,8 @@ function App(){
         <Route path="/admin/category/view" element={<CategoryView />} />
         <Route path="/admin/users/view" element={<ViewUsers />} />
         <Route path="/admin/users/details/:userId" element={<UserDetails />} />
+        <Route path="/admin/payment" element={<ViewPayments />} />
+        <Route path="/admin/payment/:paymentId" element={<PaymentDetails/>} />
 
         <Route path="/products" element={<HomePage />} />
         <Route path="/products/details/:productId" element={<ProductPage />} />
