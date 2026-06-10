@@ -109,8 +109,8 @@ public class PaymentService {
         return paymentRepository.findAll();
     }
 
-    public List<Payment> getPaymentsByStatus(PaymentStatusEnum status){
-        return paymentRepository.findByStatus(status);
+    public List<Payment> getPaymentsByStatus(String status){
+        return paymentRepository.findByStatusContainingIgnoreCase(status);
     }
 
     public Orders viewPaymentDetails(UUID paymentId){

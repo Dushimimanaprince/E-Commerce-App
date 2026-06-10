@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ecommerce.Enum.OrderStatus;
-import ecommerce.Enum.PaymentStatusEnum;
 import ecommerce.models.Category;
 import ecommerce.models.Product;
 import ecommerce.service.CategoryService;
@@ -210,12 +209,19 @@ public class AdminController {
         }
     }
 
-    @GetMapping("/payments/status/{status}")
-    public ResponseEntity<?> getPaymentsByStatus(@PathVariable String status){
+    @GetMapping("/payments/details/{paymentId}")
+    public ResponseEntity<?> viewDetails(@PathVariable UUID paymentId){
+        try{
+            return ResponseEntity.ok(paymentService.viewPaymentDetails(paymentId));
+        }catch(RuntimeException e){
+            return ResponseEntity.badRequest().body(Map.of("error",e.getMessage()));
+        }
+    } 
+
+    @GetMapping("/payments/status")
+    public ResponseEntity<?> getPaymentsByStatus(@RequestParam String status){
         try {
-            return ResponseEntity.ok(paymentService.getPaymentsByStatus(
-                PaymentStatusEnum.valueOf(status.toUpperCase())
-            ));
+            return ResponseEntity.ok(paymentService.getPaymentsByStatus(status));
         } catch(RuntimeException e){
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

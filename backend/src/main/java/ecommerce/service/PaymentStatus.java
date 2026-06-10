@@ -24,7 +24,7 @@ public class PaymentStatus {
     private final OrderRepository orderRepository;
 
     @Scheduled(fixedDelay = 10000)
-    @Transactional // 🎯 ADD THIS: Forces a clean transaction block so relational updates commit cleanly
+    @Transactional
     public void pendingPayments(){
 
         List<Payment> pendingPayments = paymentRepository.findByStatus(PaymentStatusEnum.PENDING);
@@ -37,7 +37,6 @@ public class PaymentStatus {
 
             if (status == null) continue;
 
-            // Grab the order associated with this managed payment record
             Orders order = payment.getOrder(); 
 
             if(status.equalsIgnoreCase("paid")){
@@ -46,7 +45,7 @@ public class PaymentStatus {
                 
                 if (order != null) {
                     order.setOrderStatus(OrderStatus.PAID);
-                    orderRepository.save(order); // 🚀 This will now execute perfectly!
+                    orderRepository.save(order);
                 }
                 paymentRepository.save(payment);
                 
